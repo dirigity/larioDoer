@@ -25,7 +25,7 @@
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aabaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -73,17 +73,81 @@
         function tick(){
             //moveCharacter
             if(keys[87]==true){//w
-                aceleraciony = 0.05;
+                if(colisionIn(caracterx,caractery+0.5)){ 
+                    aceleraciony = -1;
+                }else{
+                    aceleraciony = 0.05;
+                }
             }else{
-                aceleraciony = -0.05;
+                aceleraciony = 0.1;
             }
             if(keys[65]==true){//a
-                aceleracionx = 0.05;
-            }else if(keys[68]==true){//d
                 aceleracionx = -0.05;
+            }else if(keys[68]==true){//d
+                aceleracionx = 0.05;
             }else aceleracionx = 0;
-            velocidadx = velocidadx/2 + aceleracionx;
-            velocidady = velocidady/2 + aceleraciony;
+
+            velocidadx = velocidadx/1.1 + aceleracionx;
+            velocidady = velocidady/1.1 + aceleraciony;
+            
+            if(!colisionIn(caracterx + velocidadx,caractery)){
+                caracterx = caracterx + velocidadx;
+            }else {
+                velocidadx = 0;
+                //caracterx = Math.round(caracterx);
+            }
+
+            if(!colisionIn(caracterx,caractery + velocidady)){
+                caractery = caractery + velocidady;
+            }else {
+                velocidady = 0;
+                //caractery = Math.round(caractery);
+
+            }  
+
+            /* if(velocidadx<0){
+                if(get(caracterx-1,caractery)=="a"){
+                    caracterx = caracterx + velocidadx;
+                }else {
+                    velocidadx = 0;
+                    caracterx = Math.round(caracterx);
+                }
+            }else if(velocidadx>0){
+                if(get(caracterx+1,caractery)=="a"){
+                    caracterx = caracterx + velocidadx;
+                }else {
+                    velocidadx = 0;
+                    caracterx = Math.round(caracterx);
+                };
+            }
+
+            if(velocidady<0){
+                if(get(caracterx,caractery-1)=="a"){
+                    caractery = caractery + velocidady;
+                }else {
+                    velocidady = 0;
+                    caractery = Math.round(caractery);
+                }
+            }else if(velocidady>0){
+                if(get(caracterx,caractery+1)=="a"){
+                    caractery = caractery + velocidady;
+                }else {
+                    velocidady = 0;
+                    caractery = Math.round(caractery);
+                }
+            }   */
+
+
+            /* if(get(caracterx + velocidadx,0)=="a"){
+                console.log(get(caracterx + velocidadx,0));
+                caracterx = caracterx + velocidadx;
+            }else velocidadx = 0;
+
+            if(get(0,caractery + velocidady)=="a"){
+                console.log(get(caractery + velocidady,0));
+                caractery = caractery + velocidady;
+            }else velocidady = 0;   */
+
 
             //set up the canvas
             ctx.fillRect(0, 0, canvas.height, canvas.width);
@@ -117,7 +181,13 @@
 
             setTimeout(() => {
                 tick();
-            }, 10);
+            }, 1);
+        }
+        function colisionIn(x,y) {
+            return  get(x,y)!="a" ||
+                    get(x+1,y)!="a" ||
+                    get(x+1,y+1)!="a" ||
+                    get(x,y+1)!="a"; 
         }
         function toScreen(x,y){
             return[(x+camarax)*pixelSize,(y+camaray)*pixelSize];
@@ -158,10 +228,10 @@
         });
         tick();
         function get(x,y) {
-            if(map[Math.round(y)]){
+            if(map[Math.trunc(y)]){
                 //console.log(Math.round(x),Math.round(y),Array.from(map[Math.round(y)])[Math.round(x)]); 
                 //console.log(Math.round(y),map[Math.round(y)]);
-                return Array.from(map[Math.round(y)])[Math.round(x)];
+                return Array.from(map[Math.trunc(y)])[Math.trunc(x)];
             } else return "a";
         }
         </script>
