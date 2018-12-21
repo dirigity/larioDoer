@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <style>
+            canvas {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            body{
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                padding: 0px;
+            }
+        </style>
+    </head>
+    <body>  
+        <canvas onclick="CanvasClicked()" id="MainCanvasDisplay" oncontextmenu="select()"></canvas>
+        <script>
+	    var canvas = document.getElementById("MainCanvasDisplay");
+        var ctx = canvas.getContext("2d");
+            
+        var ratonx = 0;
+        var ratony = 0;
+        
+        var caracterx = 6;
+        var caractery = 6;
+
+        var camaraxaim = 0;
+        var camarayaim = 0;
+
+        var camarax = 0;
+        var camaray = 0;
+
+        var pixelSize = 20;
+
+        var velocidadx = 0;
+        var velocidady = 0;
+
+        var aceleracionx = 0;
+        var aceleraciony = -1;
+     
+        var map = 
+        [
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aabaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaabbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        
+            
+        ];
+        var map1 =["b"];
+
+
+        
+        
+        var keys = [];
+        window.onkeyup = function(e) { keys[e.keyCode] = false; tick(); }
+        window.onkeydown = function(e) { keys[e.keyCode] = true; tick(); }
+        function tick(){
+            //moveCharacter
+            if(keys[87]==true){//w
+                aceleraciony = 1;
+            }else{
+                aceleraciony = 0;
+            }
+
+            if(keys[65]==true){//a
+                aceleracionx = 1;
+            }else if(keys[68]==true){//d
+                aceleracionx = -1;
+            }else aceleracionx = 0;
+            
+
+            velocidadx = velocidadx/2 + aceleracionx;
+            velocidady = velocidady/2 + aceleraciony;
+
+            caracterx = caracterx + velocidadx;
+            caractery = caractery + velocidady;
+
+            console.log(aceleracionx,aceleraciony,velocidadx,velocidadx,caracterx,caractery)
+            //set up the canvas
+            ctx.fillRect(0, 0, canvas.height, canvas.width);
+            canvas.height = canvas.clientHeight;
+            canvas.width = canvas.clientWidth;
+            //camara pos stuff
+
+            camaraxaim = caracterx;
+            camarayaim = caractery;
+
+            if(camaraxaim!=camarax){
+                camarax = camarax + (camaraxaim-camarax)/2;
+            }
+            if(camarayaim!=camaray){
+                camaray = camaray + (camarayaim-camaray)/2;
+            }
+            //draw the world and shit
+            for (let y = 0; y < map.length; y++) {
+                const row = Array.from(map[y]);
+                for (let x = 0; x < row.length; x++) {
+                    const pixel = row[x];
+                    if(pixel=="b"){
+                        drawXYrect((x-camarax)*pixelSize,-(y+camaray)*pixelSize,pixelSize,pixelSize,rgb(0,0,0));
+                        //console.log(caracterx,caractery);
+                    }
+                    
+                    
+                }
+            }
+            drawXYrect((caracterx-camarax)*pixelSize,-(caractery+camaray)*pixelSize,pixelSize,pixelSize,rgb(255,0,0));
+            setTimeout(() => {
+                tick();
+            }, 1000);
+        }
+        function CanvasClicked(){
+        
+        }
+        function distance(x1,y1,x2,y2){
+            return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));        
+        }
+        function drawXYrect(x, y, w, h, color) {
+            if(color) 
+                ctx.fillStyle = color; 
+            else 
+                ctx.fillStyle = "#000000";
+            y = -y+canvas.height/2;
+            ctx.fillRect(x, y, w, h);
+        }
+        function rgb(r,g,b) {
+            var r_ = check(decToHex(r));
+            var g_ = check(decToHex(g));
+            var b_ = check(decToHex(b));
+            return "#"+r_+g_+b_;
+        }
+        function decToHex(n) {
+            if(n<0){
+                n = 0xFFFFFFFF + n + 1;
+            }
+            return Math.round(n).toString(16).toUpperCase();
+        }
+        function check(n){
+            //console.log(n)
+            if(n.length>2){
+                return "FF";
+            }else if (n.length<2){
+                return "0"+n;
+            }else return n
+        }
+        canvas.addEventListener('mousemove',function onMouseover(e){
+            ratonx = e.clientX;
+            ratony = e.clientY;
+        });
+        tick();
+        </script>
+    </body>
+</html>
