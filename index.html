@@ -52,9 +52,7 @@
         "aaaaaaaaabbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-        
-            
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"  
         ];
         var map1 =["b"];
 
@@ -62,30 +60,40 @@
         
         
         var keys = [];
-        window.onkeyup = function(e) { keys[e.keyCode] = false; tick(); }
-        window.onkeydown = function(e) { keys[e.keyCode] = true; tick(); }
+        window.onkeyup = function(e) { keys[e.keyCode] = false;}
+        window.onkeydown = function(e) { keys[e.keyCode] = true;}
         function tick(){
             //moveCharacter
             if(keys[87]==true){//w
-                aceleraciony = 1;
+                aceleraciony = 0.05;
             }else{
-                aceleraciony = 0;
+                aceleraciony = -0.05;
             }
 
             if(keys[65]==true){//a
-                aceleracionx = 1;
+                aceleracionx = 0.05;
             }else if(keys[68]==true){//d
-                aceleracionx = -1;
+                aceleracionx = -0.05;
             }else aceleracionx = 0;
             
 
             velocidadx = velocidadx/2 + aceleracionx;
             velocidady = velocidady/2 + aceleraciony;
 
-            caracterx = caracterx + velocidadx;
-            caractery = caractery + velocidady;
+            
+            if(get(caracterx,caractery + velocidady)=="a"){
+                caractery = caractery + velocidady;
+            }else{
+                velocidady = 0;
+            }
+            if(get(caracterx + velocidadx,caractery)=="a"){
+                caracterx = caracterx + velocidadx;
+            }else{
+                velocidadx = 0;
+            }
+            
 
-            console.log(aceleracionx,aceleraciony,velocidadx,velocidadx,caracterx,caractery)
+            //console.log(aceleracionx,aceleraciony,velocidadx,velocidadx,caracterx,caractery)
             //set up the canvas
             ctx.fillRect(0, 0, canvas.height, canvas.width);
             canvas.height = canvas.clientHeight;
@@ -107,17 +115,20 @@
                 for (let x = 0; x < row.length; x++) {
                     const pixel = row[x];
                     if(pixel=="b"){
-                        drawXYrect((x-camarax)*pixelSize,-(y+camaray)*pixelSize,pixelSize,pixelSize,rgb(0,0,0));
+                        //drawXYrect((x-camarax)*pixelSize,-(y+camaray)*pixelSize,pixelSize,pixelSize,rgb(0,0,0));
+                        drawXYrect((x)*pixelSize,-(y)*pixelSize,pixelSize,pixelSize,rgb(0,0,0));
                         //console.log(caracterx,caractery);
                     }
                     
                     
                 }
             }
-            drawXYrect((caracterx-camarax)*pixelSize,-(caractery+camaray)*pixelSize,pixelSize,pixelSize,rgb(255,0,0));
+            //drawXYrect((caracterx-camarax)*pixelSize,(caractery+camaray)*pixelSize,pixelSize,pixelSize,rgb(255,0,0));
+            drawXYrect((caracterx)*pixelSize,(caractery)*pixelSize,pixelSize,pixelSize,rgb(255,0,0));
+
             setTimeout(() => {
                 tick();
-            }, 1000);
+            }, 10);
         }
         function CanvasClicked(){
         
@@ -158,6 +169,14 @@
             ratony = e.clientY;
         });
         tick();
+        function get(x,y) {
+            if(map[Math.round(y)]){
+                //console.log(Math.round(x),Math.round(y),Array.from(map[Math.round(y)])[Math.round(x)]); 
+                console.log(Math.round(y),Array.from(map[Math.round(y)]));
+                return Array.from(map[Math.round(y)])[Math.round(x)];
+
+            } else return "a";
+        }
         </script>
     </body>
 </html>
