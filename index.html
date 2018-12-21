@@ -16,8 +16,28 @@
         </style>
     </head>
     <body>  
-        <canvas onclick="CanvasClicked()" id="MainCanvasDisplay" oncontextmenu="select()"></canvas>
+        <canvas id="MainCanvasDisplay" oncontextmenu="select()"></canvas>
         <script>
+            
+        var map = 
+        [
+        "baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aabaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aabaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaabbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"  
+        ];
+
 	    var canvas = document.getElementById("MainCanvasDisplay");
         var ctx = canvas.getContext("2d");
             
@@ -25,7 +45,7 @@
         var ratony = 0;
         
         var caracterx = 6;
-        var caractery = 6;
+        var caractery = map.length-6;
 
         var camaraxaim = 0;
         var camarayaim = 0;
@@ -41,19 +61,7 @@
         var aceleracionx = 0;
         var aceleraciony = -1;
      
-        var map = 
-        [
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aabaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aaaaaaaaabbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"  
-        ];
+        
         var map1 =["b"];
 
 
@@ -69,69 +77,50 @@
             }else{
                 aceleraciony = -0.05;
             }
-
             if(keys[65]==true){//a
                 aceleracionx = 0.05;
             }else if(keys[68]==true){//d
                 aceleracionx = -0.05;
             }else aceleracionx = 0;
-            
-
             velocidadx = velocidadx/2 + aceleracionx;
             velocidady = velocidady/2 + aceleraciony;
 
-            
-            if(get(caracterx,caractery + velocidady)=="a"){
-                caractery = caractery + velocidady;
-            }else{
-                velocidady = 0;
-            }
-            if(get(caracterx + velocidadx,caractery)=="a"){
-                caracterx = caracterx + velocidadx;
-            }else{
-                velocidadx = 0;
-            }
-            
-
-            //console.log(aceleracionx,aceleraciony,velocidadx,velocidadx,caracterx,caractery)
             //set up the canvas
             ctx.fillRect(0, 0, canvas.height, canvas.width);
             canvas.height = canvas.clientHeight;
             canvas.width = canvas.clientWidth;
-            //camara pos stuff
 
-            camaraxaim = caracterx;
-            camarayaim = caractery;
+            //camara pos stuff
+            camaraxaim = -caracterx+((canvas.width/2)/pixelSize);
+            camarayaim = -caractery+((canvas.height/2)/pixelSize);
 
             if(camaraxaim!=camarax){
-                camarax = camarax + (camaraxaim-camarax)/2;
+                camarax = camarax + (camaraxaim-camarax)/10;
             }
             if(camarayaim!=camaray){
-                camaray = camaray + (camarayaim-camaray)/2;
+                camaray = camaray + (camarayaim-camaray)/10;
             }
-            //draw the world and shit
+            //drawtheworld
             for (let y = 0; y < map.length; y++) {
                 const row = Array.from(map[y]);
                 for (let x = 0; x < row.length; x++) {
-                    const pixel = row[x];
-                    if(pixel=="b"){
-                        //drawXYrect((x-camarax)*pixelSize,-(y+camaray)*pixelSize,pixelSize,pixelSize,rgb(0,0,0));
-                        drawXYrect((x)*pixelSize,-(y)*pixelSize,pixelSize,pixelSize,rgb(0,0,0));
-                        //console.log(caracterx,caractery);
+                    const element = row[x];
+                    if(get(x,y)=="b"){
+                        var cords = toScreen(x,y);
+                        drawXYrect(cords[0],cords[1],pixelSize,pixelSize,rgb(0,0,0));
                     }
-                    
-                    
                 }
             }
-            //drawXYrect((caracterx-camarax)*pixelSize,(caractery+camaray)*pixelSize,pixelSize,pixelSize,rgb(255,0,0));
-            drawXYrect((caracterx)*pixelSize,(caractery)*pixelSize,pixelSize,pixelSize,rgb(255,0,0));
+            var cords = toScreen(caracterx,caractery);
+            drawXYrect(cords[0],cords[1],pixelSize,pixelSize,rgb(255,0,0));
+
 
             setTimeout(() => {
                 tick();
             }, 10);
         }
-        function CanvasClicked(){
-        
+        function toScreen(x,y){
+            return[(x+camarax)*pixelSize,(y+camaray)*pixelSize];
         }
         function distance(x1,y1,x2,y2){
             return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));        
@@ -141,7 +130,6 @@
                 ctx.fillStyle = color; 
             else 
                 ctx.fillStyle = "#000000";
-            y = -y+canvas.height/2;
             ctx.fillRect(x, y, w, h);
         }
         function rgb(r,g,b) {
@@ -172,9 +160,8 @@
         function get(x,y) {
             if(map[Math.round(y)]){
                 //console.log(Math.round(x),Math.round(y),Array.from(map[Math.round(y)])[Math.round(x)]); 
-                console.log(Math.round(y),Array.from(map[Math.round(y)]));
+                //console.log(Math.round(y),map[Math.round(y)]);
                 return Array.from(map[Math.round(y)])[Math.round(x)];
-
             } else return "a";
         }
         </script>
